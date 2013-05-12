@@ -1,0 +1,18 @@
+{
+  "name": "meetingbot",
+  "version": "0.0.0",
+  "description": "Bot to alert my family when I'm in a meeting",
+  "main": "server.js",
+  "dependencies": {
+    "express": "~3.2.4",
+    "nunjucks": "~0.1.8a"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": "",
+  "author": "Chris Jaure",
+  "license": "BSD"
+}
