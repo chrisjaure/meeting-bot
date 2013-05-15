@@ -10,7 +10,7 @@ var index = env.getTemplate('index.html');
 var isInAMeeting = false;
 var blinkInt;
 var gpio = process.env.GPIO || '38';
-var intros = fs.readDirSync(path.join(__dirname, 'intros'));
+var intros = fs.readdirSync(path.join(__dirname, 'intros'));
 
 var play = function (file) {
 
@@ -41,7 +41,7 @@ var blink = function() {
 
 var playRandomIntro = function() {
 	var intro = intros[Math.floor(Math.random()*intros.length)];
-	play(path.join(__dirname, 'intros', intro));
+	play(path.join('intros', intro));
 }
 
 var playMeetingStart = play.bind(this, './meeting-start.wav');
