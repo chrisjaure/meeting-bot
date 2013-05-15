@@ -10,6 +10,7 @@ var index = env.getTemplate('index.html');
 var isInAMeeting = false;
 var blinkInt;
 var gpio = process.env.GPIO || '38';
+var intros = fs.readDirSync(path.join(__dirname, 'intros'));
 
 var play = function (file) {
 
@@ -38,9 +39,13 @@ var blink = function() {
 	} catch(e) {}
 }
 
+var playRandomIntro = function() {
+	var intro = intros[Math.floor(Math.random()*intros.length)];
+	play(path.join(__dirname, 'intros', intro));
+}
+
 var playMeetingStart = play.bind(this, './meeting-start.wav');
 var playMeetingEnd = play.bind(this, './meeting-end.wav');
-var playIntro = play.bind(this, './meeting-bot.wav');
 
 // export the gpio
 try {
@@ -50,7 +55,7 @@ try {
 app.get('/', function(req, res) {
 	res.charset = 'utf-8';
 	res.type('html').send(index.render({ inAMeeting: isInAMeeting }));
-	playIntro();
+	playRandomIntro();
 });
 
 app.get('/meeting/start', function(req, res) {
