@@ -28,7 +28,7 @@ var play = function (file) {
 		console.log('child process exited with code ' + code);
 	});
 
-}
+};
 
 var blink = function() {
 	try {
@@ -37,12 +37,12 @@ var blink = function() {
 			fs.writeFileSync('/sys/class/gpio/gpio'+gpio+'/direction', 'low');
 		}, 1000);
 	} catch(e) {}
-}
+};
 
 var playRandomIntro = function() {
 	var intro = intros[Math.floor(Math.random()*intros.length)];
 	play(path.join('intros', intro));
-}
+};
 
 var playMeetingStart = play.bind(this, './meeting-start.wav');
 var playMeetingEnd = play.bind(this, './meeting-end.wav');
