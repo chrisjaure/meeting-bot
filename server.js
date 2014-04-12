@@ -30,6 +30,10 @@ var play = function (file) {
 		console.log('child process exited with code ' + code);
 	});
 
+	ps.on('error', function(err) {
+		console.log(err.message);
+	});
+
 };
 
 var blink = function() {
