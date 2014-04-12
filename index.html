@@ -12,51 +12,50 @@
 			padding: 0;
 		}
 		button {
-			position: absolute;
-			top: 1em;
-			bottom: 1em;
-			left: 1em;
-			right: 1em;
-			font-size: 5em;
-			border-radius: 10px;
 			background: #fff;
+			border-radius: 10px;
 			border: solid 1px #ccc;
-			box-sizing: border-box;
+			bottom: 0.5em;
 			box-shadow: 0 0.1em 0.3em rgba(0,0,0,0.3);
+			font-size: 5em;
+			left: 0.5em;
+			padding: 1em;
+			position: absolute;
+			right: 0.5em;
+			top: 0.5em;
 		}
 		.active {
-			color: #fff;
 			background-color: #ae0001;
+			color: #fff;
 		}
 		.inactive {
-			color: #fff;
 			background-color: #2eae00;
+			color: #fff;
 		}
 	</style>
 	<body>
 		<button id="toggle-meeting" class="{% if inAMeeting -%} active {%- else -%} inactive {%- endif %}">
 			{% if inAMeeting -%} In {%- else -%} Not in {%- endif %}
 			a meeting.
-		</p>
+		</button>
+		<script>
+			var inAMeeting = {{ inAMeeting }};
+			var button = document.getElementById('toggle-meeting');
+			button.addEventListener('click', function(){
+				inAMeeting = !inAMeeting;
+				var url = (inAMeeting) ? 'meeting/start' : 'meeting/stop';
+				button.className = (inAMeeting) ? 'active' : 'inactive';
+				button.innerHTML = (inAMeeting) ? 'In a meeting.' : 'Not in a meeting.';
+				httpGet(url);
+			}, false);
+
+			function httpGet(url) {
+				var xmlHttp = null;
+				xmlHttp = new XMLHttpRequest();
+				xmlHttp.open( "GET", url, false );
+				xmlHttp.send( null );
+				return xmlHttp.responseText;
+			}
+		</script>
 	</body>
-	<script>
-		var inAMeeting = {{ inAMeeting }};
-		var button = document.getElementById('toggle-meeting');
-		button.addEventListener('click', function(){
-			inAMeeting = !inAMeeting;
-			var url = (inAMeeting) ? 'meeting/start' : 'meeting/stop';
-			button.className = (inAMeeting) ? 'active' : 'inactive';
-			button.innerHTML = (inAMeeting) ? 'In a meeting' : 'Not in a meeting';
-			httpGet(url);
-		}, false);
-
-		function httpGet(url) {
-			var xmlHttp = null;
-
-			xmlHttp = new XMLHttpRequest();
-			xmlHttp.open( "GET", url, false );
-			xmlHttp.send( null );
-			return xmlHttp.responseText;
-		}
-	</script>
 </html>
