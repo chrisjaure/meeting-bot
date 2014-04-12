@@ -16,7 +16,14 @@ var port = process.env.MEETINGBOT_PORT || 80;
 
 var play = function (file) {
 
-	var ps = spawn('play', ['-q', path.join(__dirname, file)]);
+	var ps;
+
+	if (process.platform === 'darwin') {
+		ps = spawn('afplay', [path.join(__dirname, file)]);
+	}
+	else {
+		ps = spawn('play', ['-q', path.join(__dirname, file)]);
+	}
 
 	ps.stdout.on('data', function (data) {
 		console.log('stdout: ' + data);
