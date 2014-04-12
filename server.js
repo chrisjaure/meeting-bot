@@ -59,6 +59,9 @@ app.get('/', function(req, res) {
 });
 
 app.get('/meeting/start', function(req, res) {
+	if (isInAMeeting) {
+		return;
+	}
 	isInAMeeting = true;
 	res.send('Dad is in a meeting now.');
 	playMeetingStart();
@@ -66,6 +69,9 @@ app.get('/meeting/start', function(req, res) {
 });
 
 app.get(/\/meeting\/(end|stop)/, function(req, res) {
+	if (!isInAMeeting) {
+		return;
+	}
 	isInAMeeting = false;
 	res.send('Dad is done with his meeting.');
 	playMeetingEnd();
