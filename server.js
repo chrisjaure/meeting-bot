@@ -61,6 +61,10 @@ var playRandomIntro = function() {
 	play(path.join('intros', intro));
 };
 
+var sendMeetingResponse = function(res) {
+	res.send({ inAMeeting: isInAMeeting });
+};
+
 var playMeetingStart = play.bind(this, './meeting-start.wav');
 var playMeetingEnd = play.bind(this, './meeting-end.wav');
 
@@ -72,7 +76,7 @@ try {
 // rate limiter
 app.use(function(req, res, done) {
 	if (busy) {
-		res.send('Please wait a moment before making another request.');
+		sendMeetingResponse(res);
 		console.log('Rate limited.');
 	}
 	else {
@@ -88,20 +92,20 @@ app.get('/', function(req, res) {
 
 app.get('/meeting/start', function(req, res) {
 	if (isInAMeeting) {
-		return res.send('Dad already in a meeting.');
+		return sendMeetingResponse(res);
 	}
 	isInAMeeting = true;
-	res.send('Dad is in a meeting now.');
+	sendMeetingResponse(res);
 	playMeetingStart();
 	blinkInt = setInterval(blink, 2000);
 });
 
 app.get(/\/meeting\/(end|stop)/, function(req, res) {
 	if (!isInAMeeting) {
-		return res.send('Das is already done with his meeting.');
+		return sendMeetingResponse(res);
 	}
 	isInAMeeting = false;
-	res.send('Dad is done with his meeting.');
+	sendMeetingResponse(res);
 	playMeetingEnd();
 	clearInterval(blinkInt);
 });

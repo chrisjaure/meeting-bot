@@ -42,18 +42,24 @@
 			var inAMeeting = {{ inAMeeting }};
 			var button = document.getElementById('toggle-meeting');
 			button.addEventListener('click', function(){
-				inAMeeting = !inAMeeting;
-				var url = (inAMeeting) ? 'meeting/start' : 'meeting/stop';
+				var url = (!inAMeeting) ? 'meeting/start' : 'meeting/stop';
+				var response = httpGet(url);
+				try {
+					response = JSON.parse(response);
+				}
+				catch (e) {
+					return;
+				}
+				inAMeeting = response.inAMeeting;
 				button.className = (inAMeeting) ? 'active' : 'inactive';
 				button.innerHTML = (inAMeeting) ? 'In a meeting.' : 'Not in a meeting.';
-				httpGet(url);
 			}, false);
 
 			function httpGet(url) {
 				var xmlHttp = null;
 				xmlHttp = new XMLHttpRequest();
-				xmlHttp.open( "GET", url, false );
-				xmlHttp.send( null );
+				xmlHttp.open("GET", url, false);
+				xmlHttp.send(null);
 				return xmlHttp.responseText;
 			}
 		</script>
