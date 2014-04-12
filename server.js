@@ -9,8 +9,10 @@ var env = new nunjucks.Environment(new nunjucks.FileSystemLoader(__dirname));
 var index = env.getTemplate('index.html');
 var isInAMeeting = false;
 var blinkInt;
-var gpio = process.env.GPIO || '38';
 var intros = fs.readdirSync(path.join(__dirname, 'intros'));
+
+var gpio = process.env.MEETINGBOT_GPIO || '38';
+var port = process.env.MEETINGBOT_PORT || 80;
 
 var play = function (file) {
 
@@ -78,7 +80,7 @@ app.get(/\/meeting\/(end|stop)/, function(req, res) {
 	clearInterval(blinkInt);
 });
 
-app.listen(80, function(err){
+app.listen(port, function(err){
 	if (err) return console.log(err);
 	console.log('Listening for meetings!');
 });
