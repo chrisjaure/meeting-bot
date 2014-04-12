@@ -10,6 +10,7 @@ var index = env.getTemplate('index.html');
 var isInAMeeting = false;
 var blinkInt;
 var intros = fs.readdirSync(path.join(__dirname, 'intros'));
+var busy = false;
 
 var gpio = process.env.MEETINGBOT_GPIO || '38';
 var port = process.env.MEETINGBOT_PORT || 80;
@@ -17,6 +18,7 @@ var port = process.env.MEETINGBOT_PORT || 80;
 var play = function (file) {
 
 	var ps;
+	busy = true;
 
 	if (process.platform === 'darwin') {
 		ps = spawn('afplay', [path.join(__dirname, file)]);
@@ -34,10 +36,12 @@ var play = function (file) {
 	});
 
 	ps.on('close', function (code) {
+		busy = false;
 		console.log('child process exited with code ' + code);
 	});
 
 	ps.on('error', function(err) {
+		busy = false;
 		console.log(err.message);
 	});
 
@@ -65,6 +69,17 @@ try {
 	fs.writeFileSync('/sys/class/gpio/export', gpio);
 } catch (e) {}
 
+// rate limiter
+app.use(function(req, res, done) {
+	if (busy) {
+		res.send('Please wait a moment before making another request.');
+		console.log('Rate limited.');
+	}
+	else {
+		done();
+	}
+});
+
 app.get('/', function(req, res) {
 	res.charset = 'utf-8';
 	res.type('html').send(index.render({ inAMeeting: isInAMeeting }));
@@ -73,7 +88,7 @@ app.get('/', function(req, res) {
 
 app.get('/meeting/start', function(req, res) {
 	if (isInAMeeting) {
-		return;
+		return res.send('Dad already in a meeting.');
 	}
 	isInAMeeting = true;
 	res.send('Dad is in a meeting now.');
@@ -83,7 +98,7 @@ app.get('/meeting/start', function(req, res) {
 
 app.get(/\/meeting\/(end|stop)/, function(req, res) {
 	if (!isInAMeeting) {
-		return;
+		return res.send('Das is already done with his meeting.');
 	}
 	isInAMeeting = false;
 	res.send('Dad is done with his meeting.');
