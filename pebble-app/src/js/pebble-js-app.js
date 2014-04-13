@@ -1,5 +1,6 @@
 Pebble.addEventListener('ready', function(e) {
 	var meetingbot = new Meetingbot();
+	meetingbot.getStatus();
 	Pebble.addEventListener('appmessage', function(e) {
 		switch (e.payload.action) {
 			case 'start':
@@ -31,7 +32,7 @@ function Meetingbot () {
 					}
 					catch (err) {}
 					Pebble.sendAppMessage({
-						status: (response.inAMeeting ? 'In a metting' : 'Not in a meeting')
+						status: (response.inAMeeting ? 'In a meeting' : 'Not in a meeting')
 					});
 				}
 			}
