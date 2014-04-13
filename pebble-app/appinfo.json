@@ -1,7 +1,7 @@
 {
   "uuid": "b277c9ec-a036-493d-a1c0-65c1ed6f223a",
-  "shortName": "pebble-meeting-bot",
-  "longName": "MeetingBot",
+  "shortName": "meeting-bot",
+  "longName": "meeting-bot",
   "companyName": "Chris Jaure",
   "versionCode": 1,
   "versionLabel": "1.0.0",
@@ -9,7 +9,8 @@
     "watchface": false
   },
   "appKeys": {
-    "action": 0
+    "action": 0,
+    "status": 1
   },
   "resources": {
     "media": []

@@ -2,11 +2,10 @@
 
 static Window *window;
 static TextLayer *text_layer;
-static char action[5];
-static int is_in_meeting = 0;
 
 enum {
-  QUOTE_KEY_ACTION = 0x0,
+  MEETINGBOT_KEY_ACTION = 0x0,
+  MEETINGBOT_KEY_STATUS = 0x1
 };
 
 char *translate_error(AppMessageResult result) {
@@ -31,7 +30,7 @@ char *translate_error(AppMessageResult result) {
 
 static void send_msg(char *action) {
   APP_LOG(APP_LOG_LEVEL_DEBUG, action);
-  Tuplet action_tuple = TupletCString(QUOTE_KEY_ACTION, action);
+  Tuplet action_tuple = TupletCString(MEETINGBOT_KEY_ACTION, action);
 
   DictionaryIterator *iter;
   AppMessageResult result = app_message_outbox_begin(&iter);
@@ -53,12 +52,10 @@ static void select_click_handler(ClickRecognizerRef recognizer, void *context) {
 
 static void up_click_handler(ClickRecognizerRef recognizer, void *context) {
   send_msg("start");
-  text_layer_set_text(text_layer, "In a meeting");
 }
 
 static void down_click_handler(ClickRecognizerRef recognizer, void *context) {
   send_msg("stop");
-  text_layer_set_text(text_layer, "Not in a meeting");
 }
 
 static void click_config_provider(void *context) {
@@ -73,12 +70,14 @@ void out_sent_handler(DictionaryIterator *sent, void *context) {
 
 
 void out_failed_handler(DictionaryIterator *failed, AppMessageResult reason, void *context) {
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "App Message Failed to Send!");
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "App Message Failed to Send! %s", translate_error(reason));
 }
 
 
 void in_received_handler(DictionaryIterator *received, void *context) {
   APP_LOG(APP_LOG_LEVEL_DEBUG, "App Message received!");
+  Tuple *meeting_tuple = dict_find(received, MEETINGBOT_KEY_STATUS);
+  text_layer_set_text(text_layer, meeting_tuple->value->cstring);
 }
 
 
@@ -93,7 +92,7 @@ static void app_message_init(void) {
   app_message_register_outbox_failed(out_failed_handler);
   app_message_register_outbox_sent(out_sent_handler);
   // Init buffers
-  app_message_open(64, 16);
+  app_message_open(64, 64);
 }
 
 static void window_load(Window *window) {
@@ -101,7 +100,7 @@ static void window_load(Window *window) {
   GRect bounds = layer_get_bounds(window_layer);
 
   text_layer = text_layer_create((GRect) { .origin = { 0, 72 }, .size = { bounds.size.w, 20 } });
-  text_layer_set_text(text_layer, "Not in a meeting");
+  text_layer_set_text(text_layer, "Fetching status...");
   text_layer_set_text_alignment(text_layer, GTextAlignmentCenter);
   layer_add_child(window_layer, text_layer_get_layer(text_layer));
 }
@@ -120,6 +119,7 @@ static void init(void) {
   });
   const bool animated = true;
   window_stack_push(window, animated);
+  send_msg("status");
 }
 
 static void deinit(void) {

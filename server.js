@@ -110,6 +110,10 @@ app.get(/\/meeting\/(end|stop)/, function(req, res) {
 	clearInterval(blinkInt);
 });
 
+app.get('/meeting/status', function(req, res) {
+	sendMeetingResponse(res);
+});
+
 app.listen(port, function(err){
 	if (err) return console.log(err);
 	console.log('Listening for meetings!');
