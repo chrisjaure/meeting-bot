@@ -13,6 +13,14 @@
     "status": 1
   },
   "resources": {
-    "media": []
+    "media": [
+      {
+        "type": "png",
+        "name": "IMAGE_MENU_ICON",
+        "file": "menu-icon.png",
+        "menuIcon": true
+      }
+
+    ]
   }
 }
