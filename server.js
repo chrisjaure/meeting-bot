@@ -2,14 +2,12 @@ var fs = require('fs');
 var path = require('path');
 var spawn = require('child_process').spawn;
 var express = require('express');
-var nunjucks = require('nunjucks');
 
 var app = express();
-var env = new nunjucks.Environment(new nunjucks.FileSystemLoader(__dirname));
-var index = env.getTemplate('index.html');
 var isInAMeeting = false;
 var blinkInt;
 var intros = fs.readdirSync(path.join(__dirname, 'intros'));
+var index = fs.readFileSync(path.join(__dirname, 'index.html')).toString('utf-8');
 var busy = false;
 
 var gpio = process.env.MEETINGBOT_GPIO || '38';
@@ -86,7 +84,7 @@ app.use(function(req, res, done) {
 
 app.get('/', function(req, res) {
 	res.charset = 'utf-8';
-	res.type('html').send(index.render({ inAMeeting: isInAMeeting }));
+	res.type('html').send(index);
 	playRandomIntro();
 });
 

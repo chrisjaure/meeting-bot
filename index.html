@@ -34,26 +34,38 @@
 		}
 	</style>
 	<body>
-		<button id="toggle-meeting" class="{% if inAMeeting -%} active {%- else -%} inactive {%- endif %}">
-			{% if inAMeeting -%} In {%- else -%} Not in {%- endif %}
-			a meeting.
+		<button id="toggle-meeting" class="inactive">
+			Fetching status...
 		</button>
 		<script>
-			var inAMeeting = {{ inAMeeting }};
+			var inAMeeting = false;
 			var button = document.getElementById('toggle-meeting');
 			button.addEventListener('click', function(){
-				var url = (!inAMeeting) ? 'meeting/start' : 'meeting/stop';
-				var response = httpGet(url);
+				var endpoint = (!inAMeeting) ? 'start' : 'stop';
+				makeRequest(endpoint);
+				updateStatus();
+			}, false);
+
+			makeRequest('status');
+			updateStatus();
+
+			function updateStatus () {
+				button.className = (inAMeeting) ? 'active' : 'inactive';
+				button.innerHTML = (inAMeeting) ? 'In a meeting.' : 'Not in a meeting.';
+			}
+
+			function makeRequest (endpoint) {
+				var url = 'meeting/';
+				var response = httpGet(url + endpoint);
 				try {
 					response = JSON.parse(response);
+					inAMeeting = response.inAMeeting;
 				}
 				catch (e) {
 					return;
 				}
-				inAMeeting = response.inAMeeting;
-				button.className = (inAMeeting) ? 'active' : 'inactive';
-				button.innerHTML = (inAMeeting) ? 'In a meeting.' : 'Not in a meeting.';
-			}, false);
+				return response;
+			}
 
 			function httpGet(url) {
 				var xmlHttp = null;
