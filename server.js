@@ -72,6 +72,13 @@ try {
 	fs.writeFileSync('/sys/class/gpio/export', gpio);
 } catch (e) {}
 
+// clean up on exit
+process.on('exit', function(){
+	try {
+		fx.writeFileSync('/sys/class/gpio/unexport', gpio);
+	} catch (e) {}
+});
+
 // rate limiter
 app.use(function(req, res, done) {
 	if (busy) {
