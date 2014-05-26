@@ -10,7 +10,8 @@ var intros = fs.readdirSync(path.join(__dirname, 'intros'));
 var index = fs.readFileSync(path.join(__dirname, 'index.html')).toString('utf-8');
 var busy = false;
 
-var gpio = process.env.MEETINGBOT_GPIO || '38';
+// gpio 38 = P8.3/GPIO1_6 on Beaglebone
+var gpio = process.env.MEETINGBOT_GPIO || 38;
 var port = process.env.MEETINGBOT_PORT || 80;
 
 var play = function (file) {
