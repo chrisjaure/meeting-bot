@@ -18,24 +18,35 @@ Pebble.addEventListener('ready', function(e) {
 });
 
 function Meetingbot () {
-	var url = 'http://meeting-bot/meeting/';
+	var url = 'http://192.168.1.223/meeting/';
 
 	function makeRequest (action) {
 		var req = new XMLHttpRequest();
 		var response;
 		req.open('GET', url + action, true);
 		req.onload = function(e) {
-			if (req.readyState == 4 && req.status == 200) {
+			if (req.readyState == 4) {
 				if (req.status == 200) {
 					try {
 						response = JSON.parse(req.responseText);
 					}
-					catch (err) {}
+					catch (err) {
+						return console.log('Could not parse response!');
+					}
 					Pebble.sendAppMessage({
 						status: (response.inAMeeting ? 'In a meeting' : 'Not in a meeting')
 					});
 				}
+				else {
+					console.log('Request failed!');
+				}
 			}
+			else {
+				console.log('Request failed!');
+			}
+		};
+		req.onerror = function(event) {
+			console.log('Request failed!');
 		};
 		req.send(null);
 	}
