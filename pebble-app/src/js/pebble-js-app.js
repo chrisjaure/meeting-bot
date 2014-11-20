@@ -18,7 +18,7 @@ Pebble.addEventListener('ready', function(e) {
 });
 
 function Meetingbot () {
-	var url = 'http://meeting-bot/meeting/';
+	var url = 'http://meeting-bot.local/meeting/';
 
 	function makeRequest (action) {
 		var req = new XMLHttpRequest();
